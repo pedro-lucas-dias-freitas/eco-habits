@@ -85,7 +85,18 @@ defmodule EcoHabits.Accounts do
   opts = Keyword.put(opts, :hash_password, false)
 
   User.registration_changeset(user, attrs, opts)
-end
+  end
+
+
+  def change_user_profile(user, attrs \\ %{}) do
+    User.profile_changeset(user, attrs)
+  end
+
+  def update_user_profile(user, attrs) do
+    user
+    |> User.profile_changeset(attrs)
+    |> Repo.update()
+  end
 
   ## Settings
 

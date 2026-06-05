@@ -28,6 +28,15 @@ defmodule EcoHabits.Accounts.User do
   |> validate_password(opts)
 end
 
+
+def profile_changeset(user, attrs) do
+  user
+  |> cast(attrs, [:name, :bio])
+  |> validate_required([:name])
+  |> validate_length(:name, min: 2, max: 100)
+  |> validate_length(:bio, max: 500)
+end
+
   @doc """
   A user changeset for registering or changing the email.
 
