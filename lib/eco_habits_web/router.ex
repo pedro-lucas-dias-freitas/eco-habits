@@ -18,6 +18,11 @@ defmodule EcoHabitsWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/habits", HabitLive.Index, :index
+    live "/habits/new", HabitLive.Form, :new
+    live "/habits/:id", HabitLive.Show, :show
+    live "/habits/:id/edit", HabitLive.Form, :edit
   end
 
   # Other scopes may use custom stacks.
