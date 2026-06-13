@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :eco_habits, EcoHabits.Repo,
   adapter: Ecto.Adapters.MyXQL,
-  username: "eco_user",
+  username: "root",
   password: "senha123banco",
   hostname: "localhost",
   database: "eco_habits_dev",

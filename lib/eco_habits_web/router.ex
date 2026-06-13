@@ -22,10 +22,6 @@ defmodule EcoHabitsWeb.Router do
 
     get "/", PageController, :home
 
-    live "/habits", HabitLive.Index, :index
-    live "/habits/new", HabitLive.Form, :new
-    live "/habits/:id", HabitLive.Show, :show
-    live "/habits/:id/edit", HabitLive.Form, :edit
   end
 
   # Other scopes may use custom stacks.
@@ -60,6 +56,11 @@ defmodule EcoHabitsWeb.Router do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
       live "/profile", ProfileLive, :show
+
+      live "/habits", HabitLive.Index, :index
+      live "/habits/new", HabitLive.Form, :new
+      live "/habits/:id", HabitLive.Show, :show
+      live "/habits/:id/edit", HabitLive.Form, :edit
     end
 
     post "/users/update-password", UserSessionController, :update_password
