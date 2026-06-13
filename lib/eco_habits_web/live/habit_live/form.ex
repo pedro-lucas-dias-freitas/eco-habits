@@ -73,24 +73,35 @@ defmodule EcoHabitsWeb.HabitLive.Form do
   end
 
   def handle_event("save", %{"habit" => habit_params}, socket) do
-    user_id = socket.assigns.current_scope.user.id
-    params_com_usuario = Map.put(habit_params, "user_id", user_id)
-
     action = if socket.assigns.habit.id, do: :edit, else: :new
 
-    save_habit(socket, action, params_com_usuario)
+    params_finais =
+      if action == :new do
+        Map.put(habit_params, "user_id", socket.assigns.current_scope.user.id)
+      else
+        habit_params
+      end
+
+    save_habit(socket, action, params_finais)
   end
 
   defp save_habit(socket, :edit, habit_params) do
-    case Habits.update_habit(socket.assigns.habit, habit_params) do
-      {:ok, habit} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Habit updated successfully")
-         |> push_navigate(to: return_path(socket.assigns.return_to, habit))}
+    if socket.assigns.habit.user_id == socket.assigns.current_scope.user.id do
+      case Habits.update_habit(socket.assigns.habit, habit_params) do
+        {:ok, _habit} ->
+          {:noreply,
+           socket
+           |> put_flash(:info, "Hábito atualizado com sucesso!")
+           |> push_navigate(to: ~p"/habits")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:noreply, assign(socket, form: to_form(changeset))}
+      end
+    else
+      {:noreply,
+       socket
+       |> put_flash(:error, "Ação bloqueada: você não tem permissão para editar este hábito.")
+       |> push_navigate(to: ~p"/habits")}
     end
   end
 

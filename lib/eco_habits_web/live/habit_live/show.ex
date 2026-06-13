@@ -14,9 +14,12 @@ defmodule EcoHabitsWeb.HabitLive.Show do
           <.button navigate={~p"/habits"}>
             <.icon name="hero-arrow-left" />
           </.button>
-          <.button variant="primary" navigate={~p"/habits/#{@habit}/edit?return_to=show"}>
-            <.icon name="hero-pencil-square" /> Edit habit
-          </.button>
+          
+          <%= if @habit.user_id == @current_scope.user.id do %>
+            <.button variant="primary" navigate={~p"/habits/#{@habit}/edit?return_to=show"}>
+              <.icon name="hero-pencil-square" /> Edit habit
+            </.button>
+          <% end %>
         </:actions>
       </.header>
 

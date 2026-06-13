@@ -43,19 +43,26 @@ defmodule EcoHabitsWeb.HabitLive.Index do
         <:col :let={{_id, habit}} label="Description">{habit.description}</:col>
         <:col :let={{_id, habit}} label="Category">{habit.category}</:col>
         <:col :let={{_id, habit}} label="Points">{habit.points}</:col>
+
         <:action :let={{_id, habit}}>
           <div class="sr-only">
             <.link navigate={~p"/habits/#{habit}"}>Show</.link>
           </div>
-          <.link navigate={~p"/habits/#{habit}/edit"}>Edit</.link>
+          
+          <%= if habit.user_id == @current_scope.user.id do %>
+            <.link navigate={~p"/habits/#{habit}/edit"}>Edit</.link>
+          <% end %>
         </:action>
+        
         <:action :let={{id, habit}}>
-          <.link
-            phx-click={JS.push("delete", value: %{id: habit.id}) |> hide("##{id}")}
-            data-confirm="Are you sure?"
-          >
-            Delete
-          </.link>
+          <%= if habit.user_id == @current_scope.user.id do %>
+            <.link
+              phx-click={JS.push("delete", value: %{id: habit.id}) |> hide("##{id}")}
+              data-confirm="Você tem certeza que deseja excluir?"
+            >
+              Delete
+            </.link>
+          <% end %>
         </:action>
       </.table>
     </Layouts.app>
@@ -74,9 +81,13 @@ defmodule EcoHabitsWeb.HabitLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     habit = Habits.get_habit!(id)
-    {:ok, _} = Habits.delete_habit(habit)
 
-    {:noreply, stream_delete(socket, :habits, habit)}
+    if habit.user_id == socket.assigns.current_scope.user.id do
+      {:ok, _} = Habits.delete_habit(habit)
+      {:noreply, stream_delete(socket, :habits, habit)}
+    else
+      {:noreply, put_flash(socket, :error, "Ação bloqueada: você só pode excluir os seus próprios hábitos.")}
+    end
   end
 
   @impl true
