@@ -45,14 +45,14 @@ Para rodar o servidor do EcoHabits na sua máquina, certifique-se de ter o Elixi
 
 1. Clone o repositório e acesse a pasta do projeto:
    ```bash
-   git clone <url-do-repositorio>
-   cd eco_habits```
+   git clone <https://github.com/pedro-lucas-dias-freitas/eco-habits.git>
+   cd eco_habits
 
 2. Instale as dependências e configure o banco de dados (certifique-se de que as credenciais no config/dev.exs estejam corretas para o seu MySQL local):
-```mix setup```
+   ```mix setup```
 
 3. Inicie o servidor Phoenix (rode junto ao terminal interativo para depuração):
-```iex -S mix phx.server```
+   ```iex -S mix phx.server```
 
 4. Acesse a aplicação no seu navegador:
-```http://localhost:4000```
+   ```http://localhost:4000```
