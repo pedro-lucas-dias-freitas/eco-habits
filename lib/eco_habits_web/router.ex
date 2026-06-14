@@ -74,6 +74,18 @@ defmodule EcoHabitsWeb.Router do
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new
+
+      #CHECKIN
+      live "/checkins", CheckinLive.Index, :index
+      live "/checkins/new", CheckinLive.Form, :new
+      live "/checkins/:id", CheckinLive.Show, :show
+      live "/checkins/:id/edit", CheckinLive.Form, :edit
+
+      #DASHBOARD
+      live "/dashboard", DashboardLive, :index
+
+      #community
+      live "/community", CommunityLive, :index
     end
 
     post "/users/log-in", UserSessionController, :create
