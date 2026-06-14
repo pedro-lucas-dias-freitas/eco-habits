@@ -7,6 +7,19 @@
 # General application configuration
 import Config
 
+config :eco_habits, :scopes,
+  user: [
+    default: true,
+    module: EcoHabits.Accounts.Scope,
+    assign_key: :current_scope,
+    access_path: [:user, :id],
+    schema_key: :user_id,
+    schema_type: :id,
+    schema_table: :users,
+    test_data_fixture: EcoHabits.AccountsFixtures,
+    test_setup_helper: :register_and_log_in_user
+  ]
+
 config :eco_habits,
   ecto_repos: [EcoHabits.Repo],
   generators: [timestamp_type: :utc_datetime]
@@ -63,3 +76,7 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
+
+# tz package import config
+config :elixir, :time_zone_database, Tz.TimeZoneDatabase
+
