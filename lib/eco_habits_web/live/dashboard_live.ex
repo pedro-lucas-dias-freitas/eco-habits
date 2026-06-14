@@ -1,6 +1,7 @@
 defmodule EcoHabitsWeb.DashboardLive do
   use EcoHabitsWeb, :live_view
   alias EcoHabits.Checkins
+  alias EcoHabitsWeb.PointHelpers
   import EcoHabitsWeb.DateHelpers
 
   @impl true
@@ -10,16 +11,16 @@ defmodule EcoHabitsWeb.DashboardLive do
       <div class="p-6 max-w-7xl mx-auto">
         <header class="mb-8">
           <h1 class="text-3xl font-bold text-green-600">Dashboard de Impacto</h1>
-          <p class="text-green-400">Acompanhe sua jornada rumo a uma vida mais sustentável.</p>
+          <p class="text-gray-400">Acompanhe sua jornada rumo a uma vida mais sustentável.</p>
         </header>
-    
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <%!-- Card: Contador Total --%>
           <div class="bg-green-600 p-6 rounded-xl shadow-md text-white">
           <h3 class="font-semibold uppercase text-xs tracking-wider opacity-80">Pontuação Total</h3>
           <p class="text-4xl font-black mt-2"><%= @total_points %> pts</p>
         </div>
-    
+
           <%!-- Card: Distribuição (Lista simples por enquanto) --%>
           <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm col-span-2">
             <h3 class="text-gray-500 font-semibold uppercase text-xs mb-4">Distribuição por Categoria</h3>
@@ -33,7 +34,7 @@ defmodule EcoHabitsWeb.DashboardLive do
             </div>
           </div>
         </div>
-    
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <%!-- Lista de Check-ins Recentes --%>
           <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
@@ -57,7 +58,7 @@ defmodule EcoHabitsWeb.DashboardLive do
               <% end %>
             </ul>
           </div>
-    
+
           <%!-- Espaço para Gráfico Semanal (Placeholder) --%>
           <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
             <h3 class="text-gray-500 font-semibold uppercase text-xs mb-8 text-center">
@@ -106,8 +107,7 @@ defmodule EcoHabitsWeb.DashboardLive do
   defp assign_stats(socket, checkins) do
     # 1. Contador Total e Pontuação Real
     total_count = length(checkins)
-    total_points = Enum.reduce(checkins, 0, fn c, acc -> acc + c.habit.points end)
-
+    total_points = PointHelpers.total_points(checkins)
     # 2. Check-ins Recentes (últimos 5)
     recent_checkins = Enum.take(checkins, 5)
 

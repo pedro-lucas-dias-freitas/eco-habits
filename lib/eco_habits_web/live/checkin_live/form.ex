@@ -6,15 +6,6 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
   alias EcoHabits.Habits
   alias EcoHabits.Habits.Habit
 
-    # --- DADOS MOCKADOS (Módulo B temporário) ---
-#  @categories ["Alimentação", "Transporte", "Energia", "Água", "Resíduos"]
-#  @mock_habits %{
-#    "Alimentação" => [{"Segunda sem carne", 1}, {"Compostagem doméstica", 2}],
-#    "Transporte" => [{"Usar bicicleta", 3}, {"Caronas coletivas", 4}],
-#    "Energia" => [{"Apagar luzes desnecessárias", 5}, {"Banho curto", 6}],
-#    "Água" => [{"Reuso de água da chuva", 7}],
-#    "Resíduos" => [{"Reciclagem de plástico", 8}, {"Descarte de pilhas", 9}]
-#  }
 
   @impl true
   def render(assigns) do
@@ -22,7 +13,7 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
         {@page_title}
-        <:subtitle>Use this form to manage checkin records in your database.</:subtitle>
+        <:subtitle>Crie ou edite o seu check-in</:subtitle>
       </.header>
 
       <.form for={@form} id="checkin-form" phx-change="validate" phx-submit="save">
@@ -41,29 +32,9 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
     """
   end
 
-#  @impl true
-#  def mount(params, _session, socket) do
-#    {:ok,
-#     socket
-#     |> assign(:return_to, return_to(params["return_to"]))
-#     |> apply_action(socket.assigns.live_action, params)}
-#  end
-
-  # def mockada
-#  @impl true
-#  def mount(params, _session, socket) do
-#    {:ok,
-#     socket
-#     |> assign(:categories, @categories)
-#     |> assign(:selected_category, nil)
-#     |> assign(:available_habits, [])
-#     |> assign(:return_to, return_to(params["return_to"]))
-#     |> apply_action(socket.assigns.live_action, params)}
-#  end
 
   @impl true
   def mount(params, _session, socket) do
-    # Categorias devem bater com a validação do Módulo B
     categories = ["alimentação", "transporte", "energia", "água", "resíduos"]
 
     {:ok,
@@ -78,19 +49,11 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
   defp return_to("show"), do: "show"
   defp return_to(_), do: "index"
 
-#  defp apply_action(socket, :edit, %{"id" => id}) do
-#    checkin = Checkins.get_checkin!(socket.assigns.current_scope, id)
-#
-#    socket
-#    |> assign(:page_title, "Edit Checkin")
-#    |> assign(:checkin, checkin)
-#    |> assign(:form, to_form(Checkins.change_checkin(socket.assigns.current_scope, checkin)))
-#  end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     # Precarregamos o hábito para saber qual era a categoria original na edição
     checkin = Checkins.get_checkin!(socket.assigns.current_scope, id)
-              |> EcoHabits.Repo.preload(:habit)
+    |> EcoHabits.Repo.preload(:habit)
 
     habits = Habits.list_habits(checkin.habit.category)
     habit_options = Enum.map(habits, &{&1.name, &1.id})
@@ -113,19 +76,6 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
   end
 
   @impl true
-  # def mockada
-#  def handle_event("validate", %{"category" => category, "checkin" => checkin_params}, socket) do
-#    # Quando a categoria muda, atualizamos a lista de hábitos disponíveis
-#    habits = Map.get(@mock_habits, category, [])
-#
-#    changeset = Checkins.change_checkin(socket.assigns.current_scope, socket.assigns.checkin, checkin_params)
-#
-#    {:noreply,
-#      socket
-#      |> assign(selected_category: category)
-#      |> assign(available_habits: habits)
-#      |> assign(form: to_form(changeset, action: :validate))}
-#  end
   def handle_event("validate", %{"category" => category} = params,  socket) do
     # Se "checkin" não vier nos parâmetros, usamos um mapa vazio
     checkin_params = Map.get(params, "checkin", %{})
@@ -168,22 +118,8 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
     end
   end
 
-  #defp save_checkin(socket, :new, checkin_params) do
-  #  case Checkins.create_checkin(socket.assigns.current_scope, checkin_params) do
-  #    {:ok, checkin} ->
-  #      {:noreply,
-  #       socket
-  #       |> put_flash(:info, "Checkin created successfully")
-  #       |> push_navigate(
-  #         to: return_path(socket.assigns.current_scope, socket.assigns.return_to, checkin)
-  #       )}
 
-#      {:error, %Ecto.Changeset{} = changeset} ->
-#        {:noreply, assign(socket, form: to_form(changeset))}
-#    end
-#  end
-
-# função alterada para aceitar o erro
+# função alterada para aceitar o erro de checkin no mesmo dia
   defp save_checkin(socket, :new, checkin_params) do
     case Checkins.create_checkin(socket.assigns.current_scope,  checkin_params) do
       {:ok, checkin} ->
@@ -193,7 +129,6 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
          |> push_navigate(to: return_path(socket.assigns. current_scope, socket.assigns.return_to, checkin))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        # Esta linha é crucial: ela pega o erro do banco e joga de  volta para o formulário
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end

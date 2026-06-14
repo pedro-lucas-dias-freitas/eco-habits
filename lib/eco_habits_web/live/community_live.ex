@@ -44,7 +44,7 @@ defmodule EcoHabitsWeb.CommunityLive do
       <div class="p-6 max-w-2xl mx-auto">
         <header class="mb-8">
           <h1 class="text-3xl font-bold text-green-700">Feed da   Comunidade</h1>
-          <p class="text-gray-500">Veja o impacto positivo que  estamos gerando juntos!</p>
+          <p class="text-gray-400">Veja o impacto positivo que  estamos gerando juntos!</p>
         </header>
         <div id="community-feed" phx-update="stream" class="space-y-6">
           <%= for {id, checkin} <- @streams.checkins do %>

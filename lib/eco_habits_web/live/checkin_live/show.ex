@@ -9,8 +9,8 @@ defmodule EcoHabitsWeb.CheckinLive.Show do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        Checkin {@checkin.id}
-        <:subtitle>This is a checkin record from your database.</:subtitle>
+        Checkin #{@checkin.id}
+        <:subtitle>Veja o seu checkin</:subtitle>
         <:actions>
           <.button navigate={~p"/checkins"}>
             <.icon name="hero-arrow-left" />
