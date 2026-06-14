@@ -3,16 +3,18 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
 
   alias EcoHabits.Checkins
   alias EcoHabits.Checkins.Checkin
+  alias EcoHabits.Habits
+  alias EcoHabits.Habits.Habit
 
     # --- DADOS MOCKADOS (Módulo B temporário) ---
-  @categories ["Alimentação", "Transporte", "Energia", "Água", "Resíduos"]
-  @mock_habits %{
-    "Alimentação" => [{"Segunda sem carne", 1}, {"Compostagem doméstica", 2}],
-    "Transporte" => [{"Usar bicicleta", 3}, {"Caronas coletivas", 4}],
-    "Energia" => [{"Apagar luzes desnecessárias", 5}, {"Banho curto", 6}],
-    "Água" => [{"Reuso de água da chuva", 7}],
-    "Resíduos" => [{"Reciclagem de plástico", 8}, {"Descarte de pilhas", 9}]
-  }
+#  @categories ["Alimentação", "Transporte", "Energia", "Água", "Resíduos"]
+#  @mock_habits %{
+#    "Alimentação" => [{"Segunda sem carne", 1}, {"Compostagem doméstica", 2}],
+#    "Transporte" => [{"Usar bicicleta", 3}, {"Caronas coletivas", 4}],
+#    "Energia" => [{"Apagar luzes desnecessárias", 5}, {"Banho curto", 6}],
+#    "Água" => [{"Reuso de água da chuva", 7}],
+#    "Resíduos" => [{"Reciclagem de plástico", 8}, {"Descarte de pilhas", 9}]
+#  }
 
   @impl true
   def render(assigns) do
@@ -24,33 +26,15 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
       </.header>
 
       <.form for={@form} id="checkin-form" phx-change="validate" phx-submit="save">
-        <%!-- Dropdown 1: Categorias --%>
-        <.input
-          name="category"
-          value={@selected_category}
-          type="select"
-          label="1. Escolha a Categoria"
-          options={@categories}
-          prompt="Selecione uma categoria"
-        />
+        <.input name="category" value={@selected_category} type="select" label="1. Escolha a Categoria" options={@categories} prompt="Selecione uma categoria"/>
 
-        <%!-- Dropdown 2: Hábitos filtrados --%>
-        <.input
-          field={@form[:habit_id]}
-          type="select"
-          label="2. Selecione o Hábito"
-          options={@available_habits}
-          prompt="Selecione o hábito praticado"
-          disabled={@selected_category == nil}
-        />
-        <.input field={@form[:habit_id]} type="number" label="Habit" />
-        <.input field={@form[:data_do_checkin]} type="datetime-local" label="Data do checkin" />
-        <%!--.input field={@form[:inserted_at]} type="datetime-local" label="Data do checkin inserido" /--%>
-        <%!--.input field={@form[:updated_at]} type="datetime-local" label="Data do checkin atualizado" /--%>
+        <.input field={@form[:habit_id]} type="select" label="2. Selecione o Hábito" options={@available_habits} prompt="Selecione o hábito praticado" disabled={@selected_category == nil or @available_habits == []}/>
+
+
 
         <footer>
-          <.button phx-disable-with="Saving..." variant="primary">Save Checkin</.button>
-          <.button navigate={return_path(@current_scope, @return_to, @checkin)}>Cancel</.button>
+          <.button phx-disable-with="Salvando..." variant="primary">Salvar Checkin</.button>
+          <.button navigate={return_path(@current_scope, @return_to, @checkin)}>Cancelar</.button>
         </footer>
       </.form>
     </Layouts.app>
@@ -65,12 +49,26 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
 #     |> apply_action(socket.assigns.live_action, params)}
 #  end
 
-# def mockada
-@impl true
+  # def mockada
+#  @impl true
+#  def mount(params, _session, socket) do
+#    {:ok,
+#     socket
+#     |> assign(:categories, @categories)
+#     |> assign(:selected_category, nil)
+#     |> assign(:available_habits, [])
+#     |> assign(:return_to, return_to(params["return_to"]))
+#     |> apply_action(socket.assigns.live_action, params)}
+#  end
+
+  @impl true
   def mount(params, _session, socket) do
+    # Categorias devem bater com a validação do Módulo B
+    categories = ["alimentação", "transporte", "energia", "água", "resíduos"]
+
     {:ok,
      socket
-     |> assign(:categories, @categories)
+     |> assign(:categories, categories)
      |> assign(:selected_category, nil)
      |> assign(:available_habits, [])
      |> assign(:return_to, return_to(params["return_to"]))
@@ -80,12 +78,28 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
   defp return_to("show"), do: "show"
   defp return_to(_), do: "index"
 
+#  defp apply_action(socket, :edit, %{"id" => id}) do
+#    checkin = Checkins.get_checkin!(socket.assigns.current_scope, id)
+#
+#    socket
+#    |> assign(:page_title, "Edit Checkin")
+#    |> assign(:checkin, checkin)
+#    |> assign(:form, to_form(Checkins.change_checkin(socket.assigns.current_scope, checkin)))
+#  end
+
   defp apply_action(socket, :edit, %{"id" => id}) do
+    # Precarregamos o hábito para saber qual era a categoria original na edição
     checkin = Checkins.get_checkin!(socket.assigns.current_scope, id)
+              |> EcoHabits.Repo.preload(:habit)
+
+    habits = Habits.list_habits(checkin.habit.category)
+    habit_options = Enum.map(habits, &{&1.name, &1.id})
 
     socket
-    |> assign(:page_title, "Edit Checkin")
+    |> assign(:page_title, "Editar Checkin")
     |> assign(:checkin, checkin)
+    |> assign(:selected_category, checkin.habit.category)
+    |> assign(:available_habits, habit_options)
     |> assign(:form, to_form(Checkins.change_checkin(socket.assigns.current_scope, checkin)))
   end
 
@@ -100,16 +114,33 @@ defmodule EcoHabitsWeb.CheckinLive.Form do
 
   @impl true
   # def mockada
-  def handle_event("validate", %{"category" => category, "checkin" => checkin_params}, socket) do
-    # Quando a categoria muda, atualizamos a lista de hábitos disponíveis
-    habits = Map.get(@mock_habits, category, [])
+#  def handle_event("validate", %{"category" => category, "checkin" => checkin_params}, socket) do
+#    # Quando a categoria muda, atualizamos a lista de hábitos disponíveis
+#    habits = Map.get(@mock_habits, category, [])
+#
+#    changeset = Checkins.change_checkin(socket.assigns.current_scope, socket.assigns.checkin, checkin_params)
+#
+#    {:noreply,
+#      socket
+#      |> assign(selected_category: category)
+#      |> assign(available_habits: habits)
+#      |> assign(form: to_form(changeset, action: :validate))}
+#  end
+  def handle_event("validate", %{"category" => category} = params,  socket) do
+    # Se "checkin" não vier nos parâmetros, usamos um mapa vazio
+    checkin_params = Map.get(params, "checkin", %{})
 
-    changeset = Checkins.change_checkin(socket.assigns.current_scope, socket.assigns.checkin, checkin_params)
+    # Busca os hábitos reais da categoria
+    habits = Habits.list_habits(category)
+    habit_options = Enum.map(habits, &{&1.name, &1.id})
+
+    changeset =
+      Checkins.change_checkin(socket.assigns.current_scope, socket. assigns.checkin, checkin_params)
 
     {:noreply,
       socket
       |> assign(selected_category: category)
-      |> assign(available_habits: habits)
+      |> assign(available_habits: habit_options)
       |> assign(form: to_form(changeset, action: :validate))}
   end
 

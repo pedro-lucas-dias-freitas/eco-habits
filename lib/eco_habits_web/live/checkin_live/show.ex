@@ -22,10 +22,19 @@ defmodule EcoHabitsWeb.CheckinLive.Show do
       </.header>
 
       <.list>
-        <:item title="Habit">{@checkin.habit_id}</:item>
-        <:item title="Data do checkin">{DateHelpers.format_simple_datetime(@checkin.data_do_checkin)}</:item>
-        <:item title="Data do checkin inserido">{DateHelpers.format_br_datetime(@checkin.inserted_at)}</:item>
-        <:item title="Data do checkin última atualização">{DateHelpers.format_br_datetime(@checkin.updated_at)}</:item>
+        <:item title="Hábito">{@checkin.habit.name}</:item>
+        <:item title="Categoria">
+          <span class="capitalize">{@checkin.habit.category}</span>
+        </:item>
+        <:item title="Pontuação Gerada">
+          <span class="font-bold text-green-600">+ {@checkin.habit.points} pontos</span>
+        </:item>
+        <:item title="Realizado em">
+          {DateHelpers.format_br_datetime(@checkin.inserted_at)}
+        </:item>
+        <:item title="Última atualização">
+          {DateHelpers.format_br_datetime(@checkin.updated_at)}
+        </:item>
       </.list>
     </Layouts.app>
     """

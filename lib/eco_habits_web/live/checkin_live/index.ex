@@ -9,10 +9,10 @@ defmodule EcoHabitsWeb.CheckinLive.Index do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <.header>
-        Listing Checkins
+        Listagem de Check-ins
         <:actions>
           <.button variant="primary" navigate={~p"/checkins/new"}>
-            <.icon name="hero-plus" /> New Checkin
+            <.icon name="hero-plus" /> Novo Check-in
           </.button>
         </:actions>
       </.header>
@@ -22,22 +22,29 @@ defmodule EcoHabitsWeb.CheckinLive.Index do
         rows={@streams.checkins}
         row_click={fn {_id, checkin} -> JS.navigate(~p"/checkins/#{checkin}") end}
       >
-        <:col :let={{_id, checkin}} label="Habit">{checkin.habit_id}</:col>
-        <:col :let={{_id, checkin}} label="Data do checkin">{format_simple_datetime(checkin.data_do_checkin)}</:col>
-        <:col :let={{_id, checkin}} label="Data do criação do checkin">{format_br_datetime(checkin.inserted_at)}</:col>
-        <:col :let={{_id, checkin}} label="Última atualização">{format_br_datetime(checkin.updated_at)}</:col>
+        <%!-- Nova coluna: Categoria --%>
+        <:col :let={{_id, checkin}} label="Categoria">
+          <span class="capitalize">{checkin.habit.category}</span>
+        </:col>
+
+        <%!-- Nova coluna: Nome do Hábito --%>
+        <:col :let={{_id, checkin}} label="Hábito">{checkin.habit.name}</:col>
+
+        <:col :let={{_id, checkin}} label="Realizado em">{format_br_datetime(checkin.inserted_at)}</:col>
+
         <:action :let={{_id, checkin}}>
           <div class="sr-only">
-            <.link navigate={~p"/checkins/#{checkin}"}>Show</.link>
+            <.link navigate={~p"/checkins/#{checkin}"}>Ver</.link>
           </div>
-          <.link navigate={~p"/checkins/#{checkin}/edit"}>Edit</.link>
+          <.link navigate={~p"/checkins/#{checkin}/edit"}>Editar</.link>
         </:action>
+
         <:action :let={{id, checkin}}>
           <.link
             phx-click={JS.push("delete", value: %{id: checkin.id}) |> hide("##{id}")}
-            data-confirm="Are you sure?"
+            data-confirm="Tem certeza?"
           >
-            Delete
+            Excluir
           </.link>
         </:action>
       </.table>
