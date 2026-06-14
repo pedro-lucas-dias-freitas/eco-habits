@@ -25,12 +25,22 @@ defmodule EcoHabitsWeb.HabitLive.Form do
         />
         <.input field={@form[:points]} type="number" label="Points" />
         <footer>
-          <.button phx-disable-with="Salvando..." class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg shadow-md transition-colors duration-200">
+          <div class="flex flex-col items-center gap-4 mt-10">
+        
+          <.button 
+            phx-disable-with="Registrar Hábito..."
+            class="w-full max-w-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-sm"
+          >
             Registrar Hábito
           </.button>
-          <.button navigate={return_path(@return_to, @habit)}>
-            Cancel
-          </.button>
+
+          <.link 
+            navigate={~p"/habits"} 
+            class="w-full max-w-xs text-center font-bold py-3 px-6 rounded-lg text-orange-800 bg-orange-100 hover:bg-orange-200 shadow-sm border border-orange-200 transition-colors"
+          >
+            Cancelar
+            </.link>
+          </div>
         </footer>
       </.form>
     </Layouts.app>
