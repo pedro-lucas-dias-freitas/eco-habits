@@ -68,7 +68,9 @@ defmodule EcoHabits.MixProject do
       {:bandit, "~> 1.5"},
 
 
-      {:pbkdf2_elixir, "~> 2.0"}
+      {:pbkdf2_elixir, "~> 2.0"},
+
+      {:tz, "~> 0.28.2"}
 
     ]
   end
