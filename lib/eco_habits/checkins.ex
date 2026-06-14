@@ -43,8 +43,14 @@ defmodule EcoHabits.Checkins do
       [%Checkin{}, ...]
 
   """
-  def list_checkins(%Scope{} = scope) do
-    Repo.all_by(Checkin, user_id: scope.user.id)
+  def list_checkins(current_scope) do
+    user_id = current_scope.user.id
+
+    Checkin
+    |> where(user_id: ^user_id)
+    |> order_by([desc: :inserted_at])
+    |> Repo.all()
+    |> Repo.preload(:habit) # Carrega os dados do hábito
   end
 
   @doc """
@@ -61,8 +67,11 @@ defmodule EcoHabits.Checkins do
       ** (Ecto.NoResultsError)
 
   """
-  def get_checkin!(%Scope{} = scope, id) do
-    Repo.get_by!(Checkin, id: id, user_id: scope.user.id)
+  def get_checkin!(current_scope, id) do
+    Checkin
+    |> where(user_id: ^current_scope.user.id)
+    |> Repo.get!(id)
+    |> Repo.preload(:habit) # Adicione esta linha
   end
 
   @doc """
