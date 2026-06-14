@@ -37,10 +37,39 @@ defmodule EcoHabitsWeb.Layouts do
     ~H"""
     <header class="navbar px-4 sm:px-6 lg:px-8">
       <div class="flex-1">
+        <a href="/" class="flex-1 flex w-fit items-center gap-2">
+          <p class="text-3xl font-extrabold text-green-600 tracking-tight">
+            eco<span class="text-green-800">Habits</span>
+          </p>
+        </a>
       </div>
       <div class="flex-none">
         <ul class="flex flex-column px-1 space-x-4 items-center">
-
+          <li>
+            <.link navigate={~p"/profile"} class="btn btn-ghost font-semibold">
+              Meu Perfil
+            </.link>
+          </li>
+          <li>
+            <.link navigate={~p"/habits"} class="btn btn-ghost font-semibold">
+              Meus Hábitos
+            </.link>
+          </li>
+          <li>
+            <.link navigate={~p"/checkins"} class="btn btn-ghost font-semibold">
+              Meus Check-ins
+            </.link>
+          </li>
+          <li>
+            <.link navigate={~p"/dashboard"} class="btn btn-ghost font-semibold">
+              Meu Dashboard
+            </.link>
+          </li>
+          <li>
+            <.link navigate={~p"/community"} class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
+              Comunidade Sustentável
+            </.link>
+          </li>
           <li>
             <.theme_toggle />
           </li>
