@@ -15,6 +15,7 @@ Este projeto foi desenvolvido utilizando o ecossistema Elixir/Phoenix, cumprindo
 - **[RT05]** Atualizações em tempo real (Real-time) na interface utilizando **Phoenix.PubSub**.
 - **[RT06]** Validações robustas de dados na camada de banco utilizando **Ecto Changesets** (validação de campos obrigatórios, escopo de categorias, pontuação mínima e unicidade).
 - **[RT07]** Navegação fluida entre telas (LiveViews) e redirecionamentos seguros utilizando o **Phoenix Router**.
+- MySQL como banco de dados
 
 ---
 
@@ -48,11 +49,15 @@ Para rodar o servidor do EcoHabits na sua máquina, certifique-se de ter o Elixi
    git clone <https://github.com/pedro-lucas-dias-freitas/eco-habits.git>
    cd eco_habits
 
-2. Instale as dependências e configure o banco de dados (certifique-se de que as credenciais no config/dev.exs estejam corretas para o seu MySQL local):
+2. Altere as credenciais no seu `config/dev.exs` adaptando ao seu banco de dados.
+
+3. Use o comando `mix ecto.migrate` para fazer as alterações no seu banco de dados
+
+4. Instale as dependências e configure o banco de dados (certifique-se de que as credenciais no config/dev.exs estejam corretas para o seu MySQL local):
    ```mix setup```
 
-3. Inicie o servidor Phoenix (rode junto ao terminal interativo para depuração):
+5. Inicie o servidor Phoenix (rode junto ao terminal interativo para depuração):
    ```iex -S mix phx.server```
 
-4. Acesse a aplicação no seu navegador:
+6. Acesse a aplicação no seu navegador:
    ```http://localhost:4000```
