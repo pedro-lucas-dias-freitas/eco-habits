@@ -2,14 +2,21 @@ defmodule EcoHabitsWeb.ProfileLive do
   use EcoHabitsWeb, :live_view
 
   alias EcoHabits.Accounts
+  alias EcoHabits.Checkins
+  alias EcoHabitsWeb.PointHelpers
 
   def mount(_params, _session, socket) do
     user = socket.assigns.current_scope.user
     changeset = Accounts.change_user_profile(user)
 
+    # 1. Buscamos os check-ins reais para calcular a pontuação
+    checkins = Checkins.list_checkins(socket.assigns.current_scope)
+    total_points = PointHelpers.total_points(checkins)
+
     socket =
       socket
       |> assign(:user, user)
+      |> assign(:total_points, total_points) # Assign da pontuação calculada
       |> assign(:form, to_form(changeset))
 
     {:ok, socket}
@@ -56,7 +63,7 @@ defmodule EcoHabitsWeb.ProfileLive do
           <h2 class="text-lg font-semibold text-gray-900">Pontuação total</h2>
 
           <p class="mt-2 text-4xl font-bold text-green-700">
-            {@user.total_points} pontos
+            {@total_points} pontos
           </p>
         </div>
 
